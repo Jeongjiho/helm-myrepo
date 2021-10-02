@@ -1,30 +1,11 @@
-template:
-  spec:
-    containers:
-    - name: nodejs
-      image: dangtong76/nodejs
-      ports:
-       - containerPort: 8080
-      volumeMounts:
-      - name: data
-        mountPath: /var/data
-volumeClaimTemplates:
-- metadata:
-    name: data
-  spec:
-    resources:
-      requests:
-        storage: 1Mi
-    accessModes:
-    - ReadWriteOnce
-    storageClassName: sc-standard-retain
-metadata:
-    name: nodesjs-sfs-lb
-spec:
-    ports:
-    - port: 80
-      targetPort: 8080
-reclaimPolicy: Retain
-parameters:
-  type: pd-ssd
-  zone: asia-northeast3-a
+containers: 
+  name: nodejs-sts
+  image: dangtong76/nodeapp
+  containerPort: 8080
+volum:
+  name: data
+  mountPath: /var/data
+  volumeClaimTemplates:
+  size: 30Gi
+  mode: ReadWriteOnce
+  scname: standard

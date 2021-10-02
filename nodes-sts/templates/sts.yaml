@@ -1,34 +1,34 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: nodejs-sfs
+  name: {{ .Values.containers.name }}
 spec:
   selector:
     matchLabels:
-      app: nodejs-sfs
-  serviceName: nodejs-sfs
+      app: {{ .Values.containers.name }}
+  serviceName: {{ .Values.containers.name }}
   replicas: 2
   template:
     metadata:
       labels:
-        app: nodejs-sfs
+        app: {{ .Values.containers.name }}
     spec:
       containers:
-      - name: {{ .Values.spec.template.spec.containers.name }}
-        image: {{ .Values.spec.template.spec.containers.image }}
+      - name: {{ .Values.containers.name }}
+        image: {{ default "dangtong76/nodejs" .Values.containers.image }}
         ports:
         - name: http
-          containerPort: {{ .Values.spec.template.spec.containers.containerPort }}
+          containerPort: {{ default 8080 .Values.containers.containerPort }}
         volumeMounts:
-        - name: {{ .Values.spec.template.spec.containers.volumeMounts.name }}
-          mountPath: {{ .Values.spec.template.spec.containers.volumeMounts.mountPath }}
+        - name: {{ default "data" .Values.volum.name }}
+          mountPath: {{ default "/var/data" .Values.volum.mountPath }}
   volumeClaimTemplates:
   - metadata:
-      name: {{ .Values.spec.volumeClaimTemplates.metadata.name }}
+      name: {{ default "data" .Values.volum.name }}
     spec:
       resources:
         requests:
-          storage: {{ .Values.spec.volumeClaimTemplates.spec.resources.requests.storage }}
+          storage: {{ default "20Gi" .Values.volum.size }}
       accessModes:
-      - {{ .Values.spec.volumeClaimTemplates.spec.accessModes }}
-      storageClassName: {{ .Values.spec.volumeClaimTemplates.spec.storageClassName }}
+      - {{ default "ReadWriteOnce" .Values.volum.mode }}
+      storageClassName: {{ default "standard" .Values.volum.scname }}
